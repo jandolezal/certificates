@@ -37,8 +37,6 @@ Scope abbreviations are listed on the [page](https://www.iscc-system.org/certifi
 | longitude | Longitude |
 | certificate_url | Certificate (link to pdf) |
 | audit_url | Audit report (link to pdf) |
-| downloaded | Date of the data download |
-
 
 ## Scopes vocabulary
 
