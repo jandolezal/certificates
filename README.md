@@ -1,6 +1,6 @@
-# ISCC certificates
+# ISCC and KZR INiG certificates
 
-Scrape [valid](https://www.iscc-system.org/certificates/valid-certificates/) ISCC certificates.
+Scrape valid [ISCC](https://www.iscc-system.org/certificates/valid-certificates/) and issued [KZR INiG](http://certyfikaty.kzr.inig.eu/en) certificates.
 
 ## Usage
 
@@ -14,15 +14,19 @@ Prepare the environment.
 
 `python -m pip install -r requirements.txt`
 
-Scrape valid certificates with requests and lxml.
+Scrape certificates with requests and lxml.
 
 `python -m certificates.iscc`
 
+`python -m certificates.kzr`
+
 ## Description of the data
+
+### ISCC
 
 Scope abbreviations are listed on the [page](https://www.iscc-system.org/certificates/all-certificates/) below the table.
 
-| Name | Description |
+| Column | Description |
 | ----------- | ----------- |
 | status | Status of the certificate: valid |
 | id | Certificate ID |
@@ -74,3 +78,21 @@ Scope abbreviations are listed on the [page](https://www.iscc-system.org/certifi
 | TRS | Trader with storage |
 | TW | Treatment plant for waste/ residues |
 | WH | Warehouses |
+
+
+### KZR INiG
+
+| Column | Description |
+| ----------- | ----------- |
+| status | Status (active, expired) |
+| cert_num | Certificate number |
+| url | Link to the certificate |
+| company_num | Participant number |
+| name | Name of the participant (company) |
+| address | Address |
+| location | Location |
+| valid_from | Issued on |
+| valid_to | Valid until |
+| scope | Scope of the certification |
+| body | Certification body |
+| notes | Notices |
