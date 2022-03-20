@@ -1,24 +1,28 @@
 # ISCC and KZR INiG certificates
 
-Scrape valid [ISCC](https://www.iscc-system.org/certificates/valid-certificates/) and issued [KZR INiG](http://certyfikaty.kzr.inig.eu/en) certificates.
+Scrape [ISCC](https://www.iscc-system.org/certificates/all-certificates/) and [KZR INiG](http://certyfikaty.kzr.inig.eu/en) certificates.
 
 ## Usage
 
-Prepare the environment.
+```python3
+# Prepare virtual environment and install dependencies
 
-`python3 -m venv venv`
+python3 -m venv venv
 
-`source venv/bin/activate`
+source venv/bin/activate
 
-`python -m pip install --upgrade pip`
+python -m pip install --upgrade pip
 
-`python -m pip install -r requirements.txt`
+python -m pip install -r requirements.txt
 
-Scrape certificates with requests and lxml.
+# Scrape certificates with requests and lxml and save them as .csv files to the data directory
 
-`python -m certificates.iscc`
+python -m certificates.iscc
 
-`python -m certificates.kzr`
+python -m certificates.kzr
+```
+
+There is a Github actions to scrape the data daily.
 
 ## Description of the data
 
@@ -42,7 +46,7 @@ Scope abbreviations are listed on the [page](https://www.iscc-system.org/certifi
 | certificate_url | Certificate (link to pdf) |
 | audit_url | Audit report (link to pdf) |
 
-## Scopes vocabulary
+#### Scopes vocabulary
 
 | Code | Description |
 | ----------- | ----------- |
