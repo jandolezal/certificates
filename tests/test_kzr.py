@@ -23,7 +23,7 @@ def test_process_table():
             "1.Polska, 80-718 Gdańsk, Ul. Elbląska 135; 2.  LOTOS Biopaliwa, Polska, 43-502 Czechowice-Dziedzice, ul. Łukasiewicza 2; 3. LOTOS Terminale, Polska, 43-502 Czechowice Dziedzice, ul Łukasiewicza 2; 4. Polska, 43-100 Tychy, ul. Przemysłowa 64; 5. Baltchem, Polska, 70-605 Szczecin, ul. Księdza Stanisława Kujota Nr 9;",
             "2022-03-19",
             "2023-03-18",
-            "Trading with storage; Final supplier", # This is not complete list
+            "Trading with storage|Final supplier|Other : Blending with conventional fuels and placing on the market",
             "Bureau Veritas Polska Sp. z o. o.",
             "",
             ]

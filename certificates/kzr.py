@@ -36,19 +36,22 @@ def process_table(table: HtmlElement) -> List[str]:
 
         # Rest of the columns handle in bulk (there are still two special cases)
         for td in tds[3:]:
-            #special case with target text in divs
+            #special case with target text in divs: certification scope
             divs = td.findall("div")
+            # special case with locations hidden in button title: location
+            button = td.find("button")
             if divs:
                 try:
-                    cell_text = "".join([div.text for div in divs])
+                    cell_text = "|".join([scope.strip() for scope in td.text_content().split(";")])
+                    # html elements are not consistent. ugly workaround for now
+                    other_index = cell_text.find("Other")
+                    cell_text = cell_text[:other_index] + "|" + cell_text[other_index:]
                 except TypeError:
                     cell_text = ""
+            elif button is not None:
+                cell_text = button.attrib.get("title")
             else:
                 cell_text = td.text
-            # special case with locations hidden in button title
-            button = td.find("button")
-            if button is not None:
-                cell_text = button.attrib.get("title")
 
             # Clean values before appending to list
             if cell_text:
@@ -58,9 +61,11 @@ def process_table(table: HtmlElement) -> List[str]:
             
             if cell == "---":
                 cell = ""
-            
-            if "\xa0" in cell:
-                cell = cell.replace("\xa0", "")
+
+            cell = cell.replace("\xa0", " ")
+            cell = cell.replace("\r", "")
+            cell = cell.replace("\n", "")
+            cell = cell.replace("\t", "")
 
             cert.append(cell)
 
