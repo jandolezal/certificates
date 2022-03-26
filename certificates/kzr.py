@@ -25,9 +25,19 @@ def process_table(table: HtmlElement) -> List[str]:
         # Skip first column, second and third need individual treatment
         try:
             status = tds[1].find("span").attrib.get("title")
+            # Encode status in English
+            if "aktywny" in status:
+                status = "active"
+            elif "zawieszony" in status:
+                status = "suspended"
+            elif "wygasł" in status:
+                status = "expired"
+
+        # This is a page without a certificates
         except IndexError:
             return []
         num = tds[2].text.strip()
+
         try:
             url = tds[2].find("a").attrib.get("href")
         except AttributeError:
@@ -58,10 +68,8 @@ def process_table(table: HtmlElement) -> List[str]:
                 cell = cell_text.strip()    
             else:
                 cell = ""
-            
             if cell == "---":
                 cell = ""
-
             cell = cell.replace("\xa0", " ")
             cell = cell.replace("\r", "")
             cell = cell.replace("\n", "")
@@ -83,10 +91,7 @@ if __name__ == "__main__":
     while True:
         print(f"Processing page: {i}")
         r = requests.post(KZR_POST_URL, data={"pageNum": i, "locale": "en"})
-        if r.request.method == "GET":
-            table = document_fromstring(r.text)
-        else:
-            table = fromstring(json.loads(r.text)["data"])
+        table = fromstring(json.loads(r.text)["data"])
         certs = process_table(table)
         if not certs:
             break
