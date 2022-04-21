@@ -56,14 +56,14 @@ def cert_dict_from_tablerow(tr: list) -> dict:
         'holder': (2, '//@title'),
         'scope': (3, '//text()'),
         'materials': (4, '//@title'),  # sometimes can be accessed directly
-        'valid_from': (6, None),
-        'valid_to': (7, None),
-        'body_short': (9, '//text()'),
-        'body_long': (9, '//@title'),
-        'latitude': (10, '//@href'),
-        'longitude': (10, '//@href'),
-        'certificate_url': (11, '//@href'),
-        'audit_url': (12, '//@href'),
+        'valid_from': (7, None),
+        'valid_to': (8, None),
+        'body_short': (10, '//text()'),
+        'body_long': (10, '//@title'),
+        'latitude': (11, '//@href'),
+        'longitude': (11, '//@href'),
+        'certificate_url': (12, '//@href'),
+        'audit_url': (13, '//@href'),
     }
 
     clean_map = {

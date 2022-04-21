@@ -13,19 +13,19 @@ def test_fromrow():
         assert data
 
         cert = Certificate(
-            id='EU-ISCC-Cert-US201-70601157',
+            id='EU-ISCC-Cert-US201-70601508',
             status='valid',
-            holder='UPM-Kymmene Inc., Shuman Boulevard 55, suite 400, 60563 Naperville, IL, United States',
-            scope='CP, TRS',
-            materials='CTO',
-            valid_from='2021-09-17',
-            valid_to='2022-09-16',
+            holder='Shandong Aomeng Energy Technology Development Co.,Ltd, North of Linbo Road North Head, Laozhaozhuang Town , 252600  Linqing City, Liaocheng City, Shandong Province, China',
+            scope='CP, TR',
+            materials=None,
+            valid_from='2022-04-26',
+            valid_to='2023-04-25',
             body_short='SCS',
             body_long='SCS Global Services, Emeryville, United States',
-            latitude=41.80511,
-            longitude=-88.144217,
-            certificate_url='https://certificates.iscc-system.org/cert-pdf/EU-ISCC-Cert-US201-70601157.pdf',
-            audit_url='https://certificates.iscc-system.org/cert-audit/EU-ISCC-Cert-US201-70601157_audit.pdf',
+            latitude=36.879846,
+            longitude=115.778568,
+            certificate_url=None,
+            audit_url=None,
         )
         # Check first certificate in data
         assert cert == Certificate(**cert_dict_from_tablerow(data[0]))

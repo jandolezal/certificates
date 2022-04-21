@@ -52,5 +52,5 @@ def extract_longitude(url: str) -> Optional[float]:
 
 def extract_status(status: str) -> str:
     """Given long status string extract only keyword of interest: expired, valid, withdrawn."""
-    # Always last word in the string then remove trailing dot
-    return status.split(' ')[-1].strip('.')
+    # First sentence and last word in this sentence, then remove trailing dot
+    return status.split('.')[0].split(' ')[-1].strip('.')
