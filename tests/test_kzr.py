@@ -14,7 +14,7 @@ def test_process_table():
         certs = process_table(table)
         assert len(certs) == 10
         first = [
-            "Certyfikat aktywny",
+            "active",
             "BVC/KZR/027/22",
             "http://certyfikaty.kzr.inig.eu/public/certs/2936.pdf",
             "81/7999/DD/14",
