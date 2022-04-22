@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from certificates.iscc import Certificate, cert_dict_from_tablerow
+from certificates.iscc import Certificate
 
 def test_fromrow():
     with open(pathlib.Path('tests') / 'sample_response.txt') as f:
@@ -28,4 +28,4 @@ def test_fromrow():
             audit_url=None,
         )
         # Check first certificate in data
-        assert cert == Certificate(**cert_dict_from_tablerow(data[0]))
+        assert cert == Certificate.from_tablerow(data[0])

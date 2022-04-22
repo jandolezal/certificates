@@ -4,7 +4,7 @@ from datetime import date
 import json
 import pathlib
 from urllib.parse import unquote
-from typing import List, Dict, Optional
+from typing import Any, List, Dict, Optional
 
 from lxml.html import document_fromstring, fromstring, HtmlElement
 import requests
@@ -15,97 +15,96 @@ from .helpers import extract_latitude, extract_longitude, extract_status
 @dataclasses.dataclass
 class Certificate:
 
-    id: str
-    status: str
-    holder: str
-    scope: str
-    materials: str
-    valid_from: str
-    valid_to: str
-    body_short: str
-    body_long: str
-    latitude: float
-    longitude: float
-    certificate_url: str
-    audit_url: str
+    id: str = None
+    status: str = None
+    holder: str = None
+    scope: str = None
+    materials: str = None
+    valid_from: str = None
+    valid_to: str = None
+    body_short: str = None
+    body_long: str = None
+    latitude: float = None
+    longitude: float = None
+    certificate_url: str = None
+    audit_url: str = None
 
     @classmethod
-    def prepare_fieldnames(cls):
+    def prepare_fieldnames(cls) -> list:
         return list(cls.__dataclass_fields__.keys())
 
+    @classmethod
+    def from_tablerow(cls, tr: list):
+        """Take tablerow and return Certificate instance.
+        Find data, sometimes with xpath and clean them if necessary.
+        """
+        cert = {}
 
-def data_to_csv(data: List[Certificate], filename: str = 'iscc.csv'):
-    """Save list with certificates to csv file."""
-    pathlib.Path('data').mkdir(exist_ok=True)
-    with open(pathlib.Path('data') / filename, 'w') as csvf:
-        writer = csv.DictWriter(csvf, fieldnames=Certificate.prepare_fieldnames())
-        writer.writeheader()
-        for cert in data:
-            writer.writerow(dataclasses.asdict(cert))
+        xpath_map = {
+            'id': (1, None),
+            'status': (0, '//@title'),
+            'holder': (2, '//@title'),
+            'scope': (3, '//text()'),
+            'materials': (4, '//@title'),  # sometimes can be accessed directly
+            'valid_from': (7, None),
+            'valid_to': (8, None),
+            'body_short': (10, '//text()'),
+            'body_long': (10, '//@title'),
+            'latitude': (11, '//@href'),
+            'longitude': (11, '//@href'),
+            'certificate_url': (12, '//@href'),
+            'audit_url': (13, '//@href'),
+        }
 
+        clean_map = {
+            'status': extract_status,
+            'latitude': extract_latitude,
+            'longitude': extract_longitude,
+            'certificate_url': str.strip,
+            'audit_url': str.strip,
+        }
 
-def cert_dict_from_tablerow(tr: list) -> dict:
-    """Take tablerow and prepare a dictionary representing one certificate.
-    Find data, sometimes with xpath and clean them if necessary.
-    """
-    cert = {}
-
-    xpath_map = {
-        'id': (1, None),
-        'status': (0, '//@title'),
-        'holder': (2, '//@title'),
-        'scope': (3, '//text()'),
-        'materials': (4, '//@title'),  # sometimes can be accessed directly
-        'valid_from': (7, None),
-        'valid_to': (8, None),
-        'body_short': (10, '//text()'),
-        'body_long': (10, '//@title'),
-        'latitude': (11, '//@href'),
-        'longitude': (11, '//@href'),
-        'certificate_url': (12, '//@href'),
-        'audit_url': (13, '//@href'),
-    }
-
-    clean_map = {
-        'status': extract_status,
-        'latitude': extract_latitude,
-        'longitude': extract_longitude,
-        'certificate_url': str.strip,
-        'audit_url': str.strip,
-    }
-
-    cert['status'] = 'valid'
-
-    # Some elements has to be converted to HtmlElement, others are extracted directly
-    # Materials can be extracted randomly in both ways
-    # Sometimes data are missing (IndexError)
-    for k, (index_, xpath_loc) in xpath_map.items():
-        if tr[index_] is None:
-            cert[k] = None
-            continue
-        try:
-            if k == 'materials':  # materials are tricky
-                materials = fromstring(tr[index_]).xpath(xpath_loc)
-                if materials:
-                    cert[k] = materials[0]
-                else:
-                    cert[k] = tr[index_]
-            elif xpath_loc:
-                cert[k] = fromstring(tr[index_]).xpath(xpath_loc)[0]
+        # Some elements has to be converted to HtmlElement, others are extracted directly
+        # Materials can be extracted randomly in both ways
+        # Sometimes data are missing (IndexError)
+        for k, (index_, xpath_loc) in xpath_map.items():
+            if tr[index_] is None:
+                value = None
             else:
-                cert[k] = tr[index_]
-        except IndexError:
-            cert[k] = None  # type: ignore
+                try:
+                    if k == 'materials':  # materials are tricky
+                        materials = fromstring(tr[index_]).xpath(xpath_loc)
+                        if materials:
+                            value = materials[0]
+                        else:
+                            value = tr[index_]
+                    elif xpath_loc:
+                        value = fromstring(tr[index_]).xpath(xpath_loc)[0]
+                    else:
+                        value = tr[index_]
+                except IndexError:
+                    value = None # type: ignore
+            
+            # Process some of the values with functions in clean_map
+            if (k in clean_map) and (value is not None):
+                value = clean_map[k](value)
+            
+            cert[k] = value
 
-    # Process some of the values with functions in clean_map
-    for k, v in cert.items():
-        if (k in clean_map) and (v is not None):
-            cert[k] = clean_map[k](v)
+        return cls(**cert)
 
-    return cert
+    @classmethod
+    def to_csv(cls, data: list, filename: str = 'iscc.csv') -> None:
+        """Save list with certificates to csv file."""
+        pathlib.Path('data').mkdir(exist_ok=True)
+        with open(pathlib.Path('data') / filename, 'w') as csvf:
+            writer = csv.DictWriter(csvf, fieldnames=cls.prepare_fieldnames())
+            writer.writeheader()
+            for cert in data:
+                writer.writerow(dataclasses.asdict(cert))
 
 
-def prepare_data(url, headers):
+def prepare_post_request_data(url, headers):
     """Prepare data for the post request for AJAX calls.
 
     Find wdtNonce value and update body of the post request.
@@ -143,10 +142,10 @@ def main():
     )
 
     # For subsequent AJAX call we need value of wdtNonce to update body of the post request
-    data_for_post_request = prepare_data(URL, HEADERS)
+    post_request_data = prepare_post_request_data(URL, HEADERS)
 
     response = requests.post(
-        XHR_URL, params=PARAMS, headers=HEADERS, data=data_for_post_request
+        XHR_URL, params=PARAMS, headers=HEADERS, data=post_request_data
     )
 
     # Parse response from AJAX call as JSON and access data attribute, which is list of rows from the table
@@ -156,10 +155,10 @@ def main():
     certificates = []
 
     for row in response_data:
-        cert = Certificate(**cert_dict_from_tablerow(row))
+        cert = Certificate.from_tablerow(row)
         certificates.append(cert)
 
-    data_to_csv(certificates)
+    Certificate.to_csv(certificates)
 
 
 if __name__ == '__main__':
