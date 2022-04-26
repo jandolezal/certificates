@@ -15,20 +15,33 @@ jobs:
     steps:
     - name: Checkout this repo
       uses: actions/checkout@v2
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
+
     - name: Install dependencies
       run: |-
         python3 -m pip install --upgrade pip
         python3 -m pip install -r requirements.txt
+        heroku plugins:install heroku-builds
+
     - name: Scrape valid ISCC certificates
       run: |-
         python3 -m certificates.iscc
+
     - name: Scrape KZR INiG certificates
       run: |-
         python3 -m certificates.kzr
+
+    - name: Push database to Heroku
+      run: |-
+        csvs-to-sqlite data/iscc.csv data/kzr.csv certificates.db
+        datasette publish heroku certificates.db -n red-certificates
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
     - name: Commit and push if it changed
       run: |-
         git config user.name "Automated"
