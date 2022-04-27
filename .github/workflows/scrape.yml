@@ -1,6 +1,10 @@
+# Git scraping
 # https://simonwillison.net/2020/Oct/9/git-scraping/
 
-name: Scrape certificates
+# Publish to Heroku with Datasette and Github Action
+# https://github.com/github/covid-19-repo-data 
+
+name: Scrape certificates and publish sqlite db to Heroku
 
 on:
   push:
