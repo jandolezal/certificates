@@ -126,7 +126,7 @@ def prepare_post_request_data(url, headers):
     return data
 
 
-def main():
+def scrape_iscc():
     # URL = 'https://www.iscc-system.org/certificates/valid-certificates/'
     URL = 'https://www.iscc-system.org/certificates/all-certificates/'
 
@@ -162,4 +162,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    scrape_iscc()

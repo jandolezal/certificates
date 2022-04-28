@@ -1,4 +1,5 @@
+build/
+certificates.egg-info/
 *.db
 *.pyc
 __pycache__/
-

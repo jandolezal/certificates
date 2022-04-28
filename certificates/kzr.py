@@ -82,7 +82,7 @@ def process_table(table: HtmlElement) -> List[str]:
     return certs
 
 
-if __name__ == "__main__":
+def scrape_kzr():
     kzr_certs = []
 
     i = 1
@@ -102,3 +102,7 @@ if __name__ == "__main__":
         writer = csv.writer(f)
         writer.writerow(FIELDNAMES)
         writer.writerows(kzr_certs)
+
+
+if __name__ == "__main__":
+    scrape_kzr()
