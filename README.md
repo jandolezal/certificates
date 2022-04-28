@@ -1,8 +1,8 @@
 # ISCC and KZR INiG certificates
 
-Scrape [ISCC](https://www.iscc-system.org/certificates/all-certificates/) and [KZR INiG](http://certyfikaty.kzr.inig.eu/en) certificates.
+Python modules for scraping published [ISCC](https://www.iscc-system.org/certificates/all-certificates/) and [KZR INiG](http://certyfikaty.kzr.inig.eu/en) certificates.
 
-There is a Github Action which uses Datasette to publish scraped certificates using Heroku at [red-certificates](https://red-certificates.herokuapp.com/) as SQLite database.
+There is a Github Action which scrapes the certificates daily and takes advantage of Datasette to publish scraped certificates as SQLite database hosted by Heroku at [red-certificates](https://red-certificates.herokuapp.com/).
 
 These certificates are issued by voluntary schemes based on the [Renewable Energy Directive (RED)](https://energy.ec.europa.eu/topics/renewable-energy/renewable-energy-directive-targets-and-rules/renewable-energy-directive_en), which operators in the bioenergy industry can use to certify the supply chain of bioenergy and related GHG emissions savings.
 
@@ -26,8 +26,6 @@ python -m certificates.iscc
 python -m certificates.kzr
 ```
 
-There is a Github actions to scrape the data daily.
-
 ## Description of the data
 
 ### ISCC
@@ -36,7 +34,7 @@ Scope abbreviations are listed on the [page](https://www.iscc-system.org/certifi
 
 | Column | Description |
 | ----------- | ----------- |
-| status | Status of the certificate: valid |
+| status | Status of the certificate: valid, expired, withdrawn |
 | id | Certificate ID |
 | holder | Certificate holder |
 | scope | Certification scope. Comma-separated abbreviations of the scopes |
@@ -92,7 +90,7 @@ Scope abbreviations are listed on the [page](https://www.iscc-system.org/certifi
 
 | Column | Description |
 | ----------- | ----------- |
-| status | Status (active, expired) |
+| status | Status of the certificate: active, expired, suspended |
 | cert_num | Certificate number |
 | url | Link to the certificate |
 | company_num | Participant number |
