@@ -12,7 +12,22 @@ KZR_POST_URL = "http://certyfikaty.kzr.inig.eu/table-part/en"
 FIELDNAMES = ("status", "cert_num", "url", "company_num", "name", "address", "location", "valid_from", "valid_to", "scope", "body", "notes")
 
 
-def process_table(table: HtmlElement) -> List[str]:
+def clean_cell(cell_text):
+    if cell_text == "---":
+        cell = ""
+    elif cell_text:
+        cell = cell_text.strip()
+    else:
+        cell = ""
+
+    cell = cell.replace("\xa0", " ")
+    for char in ("\r", "\n", "\t"):
+        cell = cell.replace(char, "")
+    
+    return cell
+
+
+def process_table(table: HtmlElement) -> List[List[str]]:
     trs = table.xpath("//table/tbody/tr")
 
     certs = []
@@ -42,6 +57,8 @@ def process_table(table: HtmlElement) -> List[str]:
             url = tds[2].find("a").attrib.get("href")
         except AttributeError:
             url = ""
+        
+        # Populate first three columns
         cert.extend([status, num, url])
 
         # Rest of the columns handle in bulk (there are still two special cases)
@@ -52,10 +69,8 @@ def process_table(table: HtmlElement) -> List[str]:
             button = td.find("button")
             if divs:
                 try:
-                    cell_text = "|".join([scope.strip() for scope in td.text_content().split(";")])
-                    # html elements are not consistent. ugly workaround for now
-                    other_index = cell_text.find("Other")
-                    cell_text = cell_text[:other_index] + "|" + cell_text[other_index:]
+                    # inconsistent markup for the scope field. take as it is and clean somewhere else
+                    cell_text = td.text_content()
                 except TypeError:
                     cell_text = ""
             elif button is not None:
@@ -64,16 +79,7 @@ def process_table(table: HtmlElement) -> List[str]:
                 cell_text = td.text
 
             # Clean values before appending to list
-            if cell_text:
-                cell = cell_text.strip()    
-            else:
-                cell = ""
-            if cell == "---":
-                cell = ""
-            cell = cell.replace("\xa0", " ")
-            cell = cell.replace("\r", "")
-            cell = cell.replace("\n", "")
-            cell = cell.replace("\t", "")
+            cell = clean_cell(cell_text)
 
             cert.append(cell)
 

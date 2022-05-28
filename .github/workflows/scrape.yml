@@ -8,6 +8,8 @@ name: Scrape certificates and publish sqlite db to Heroku
 
 on:
   push:
+    branches:
+    - "main"
   workflow_dispatch:
   schedule:
     - cron: "00 18 * * *"
