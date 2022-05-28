@@ -98,7 +98,7 @@ def scrape_kzr():
         kzr_certs.extend(certs)
         i += 1
 
-    with open(pathlib.Path("data") / "kzr.csv", "w") as f:
+    with open(pathlib.Path("data") / "kzr.csv", "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(FIELDNAMES)
         writer.writerows(kzr_certs)

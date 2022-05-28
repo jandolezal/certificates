@@ -97,7 +97,7 @@ class Certificate:
     def to_csv(cls, data: list, filename: str = 'iscc.csv') -> None:
         """Save list with certificates to csv file."""
         pathlib.Path('data').mkdir(exist_ok=True)
-        with open(pathlib.Path('data') / filename, 'w') as csvf:
+        with open(pathlib.Path('data') / filename, 'w', newline="") as csvf:
             writer = csv.DictWriter(csvf, fieldnames=cls.prepare_fieldnames())
             writer.writeheader()
             for cert in data:
