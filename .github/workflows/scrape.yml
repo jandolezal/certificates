@@ -42,7 +42,7 @@ jobs:
     - name: Push database to Heroku
       run: |-
         csvs-to-sqlite data/iscc.csv data/kzr.csv certificates.db
-        datasette publish heroku certificates.db -n red-certificates
+        datasette publish heroku certificates.db -n red-certificates --install=datasette-cluster-map
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
