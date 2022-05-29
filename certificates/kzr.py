@@ -3,6 +3,7 @@ import json
 import pathlib
 from typing import List
 
+import click
 import requests
 from lxml.html import document_fromstring, HtmlElement, fromstring
 
@@ -88,26 +89,27 @@ def process_table(table: HtmlElement) -> List[List[str]]:
     return certs
 
 
-def scrape_kzr():
+def scrape_kzr(filename="kzr.csv"):
     kzr_certs = []
 
     i = 1
 
     # Number of pages is not known ahead
     while True:
-        print(f"Processing page: {i}")
         r = requests.post(KZR_POST_URL, data={"pageNum": i, "locale": "en"})
         table = fromstring(json.loads(r.text)["data"])
         certs = process_table(table)
         if not certs:
             break
         kzr_certs.extend(certs)
+        click.echo(f"Processed page: {i:4}")
         i += 1
 
-    with open(pathlib.Path("data") / "kzr.csv", "w", newline="") as f:
+    with open(pathlib.Path("data") / filename, "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(FIELDNAMES)
         writer.writerows(kzr_certs)
+    click.echo(f"Saved {len(kzr_certs)} certificates to data/{filename}")
 
 
 if __name__ == "__main__":
