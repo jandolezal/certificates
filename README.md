@@ -8,7 +8,7 @@ These certificates are issued by voluntary schemes based on the [Renewable Energ
 
 ## Usage
 
-```python3
+```bash
 # Prepare virtual environment and install dependencies
 
 python3 -m venv venv
@@ -24,6 +24,22 @@ python -m pip install -r requirements.txt
 python -m certificates.iscc
 
 python -m certificates.kzr
+```
+
+Alternatively install basic CLI app using setup.py and pip
+
+```bash
+pip install .
+certificates --help
+
+Usage: certificates [OPTIONS]
+
+  Scrape bioenergy sustainability certificates.
+
+Options:
+  --scheme [all|iscc|kzr]  Choose voluntary scheme to scrape (default: all)
+  --help                   Show this message and exit.
+
 ```
 
 ## Description of the data
